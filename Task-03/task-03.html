@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Perfect circle game</title>
+    <style>
+        body {
+            background: black;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+
+        canvas {
+            background: white;
+            border: 2px solid rgb(0, 0, 0);
+        }
+
+        button{
+            margin-top: 10px;
+            padding: 10px 20px;
+            font-size: 16px;
+            border: none;
+            border-radius: 8px;
+            background: darkred;
+            color: darkgrey;
+            cursor: pointer;
+        }
+        button:hover{
+            background: grey;
+        }
+    </style>
+</head>
+<body>
+    <canvas id="board" width="500" height="500"></canvas>
+    <button id="resetBtn">RESET</button>
+    <audio id="drawSound" src="https://www.soundjay.com/button/beep-07.wav"></audio>
+
+
+
+    <script>
+        const canvas = document.getElementById('board');
+        const ctx = canvas.getContext('2d');
+        const centerX =canvas.width /2;
+        const centerY =canvas.height /2;
+        const drawSound = document.getElementById("drawSound");
+
+        ctx.beginPath();
+        ctx.arc(centerX,centerY,6,0,Math.PI *2);
+        ctx.fillStyle = 'green';
+        ctx.fill();
+
+        let isDrawing=false;
+        let path=[];
+
+        canvas.addEventListener('mousedown',(event) => {
+            isDrawing=true;
+            path=[];
+            ctx.beginPath();
+            ctx.moveTo(event.offsetX,event.offsetY);
+            drawSound.play();
+        });
+
+        canvas.addEventListener('mousemove',(event) =>{
+            if (!isDrawing) return;
+            const x=event.offsetX;
+            const y=event.offsetY;
+            ctx.lineTo(x,y);
+            ctx.stroke();
+            path.push([x,y]);
+        });
+
+        canvas.addEventListener('mouseup',(event)=>{
+            isDrawing=false;
+            ctx.closePath();
+            drawSound.pause();
+            drawSound.currentTime=0;
+            if (ctx.isPointInPath(centerX,centerY)) {
+                alert("Good! The red dot is inside your circle.");
+            } else {
+                alert("Oops! The red dot is NOT inside your circle.")
+            }
+            
+            let distances=path.map(([x,y])=>{
+                let dx=x -centerX;
+                let dy=y -centerY;
+                return Math.sqrt(dx*dx + dy*dy);
+            });
+
+            let avgRadius=distances.reduce((a,b) => a+b,0) /distances.length;
+            
+            let variance = distances.reduce((a, b) => a + Math.abs(b - avgRadius), 0) / distances.length;
+
+            let score=Math.max(0,100 -variance);
+
+            alert("Your circle score: "+ score.toFixed(2));
+
+            let bestScore = sessionStorage.getItem("bestScore") || 0;
+            if (score > bestScore) {
+                sessionStorage.setItem("bestScore", score);
+                alert("New Best Score! " + score.toFixed(2));
+            } else {
+                alert("Your circle score: " + score.toFixed(2) + "\nBest score: " + bestScore);
+            }
+
+        });     
+
+        document.getElementById("resetBtn").addEventListener("click", () => {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            drawCenterDot();
+            path = []; 
+        });
+
+    </script>
+</body>
+</html>
