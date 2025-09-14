@@ -1,0 +1,50 @@
+<div class="sq t"></div>
+<div class="sq tr"></div>
+<div class="sq bl"></div>
+<div class="L"></div>
+
+<style>
+  body {
+    margin: 0;
+    background: #142032;
+    height: 100vh;
+  }
+  .sq {
+    width: 60px;
+    height: 60px;
+    border: 10px solid #00B1D4;
+    box-sizing: border-box;
+    position: absolute;
+  }
+  .sq::after {
+    content: "";
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    width: 20px;
+    height: 20px;
+    background: #00B1D4;
+  }
+
+  .t  { top: 40px; left: 90px; }
+  .tr { top: 40px; right: 90px; }
+  .bl { bottom: 40px; left: 90px; }
+
+  .L {
+    position: absolute;
+    width: 111px;
+    height: 30px;
+    background: #00B1D4;
+    bottom: 40px;
+    right: 90px;
+  }
+  .L::after {
+    content: "";
+    position: absolute;
+    width: 30px;
+    height: 110px;
+    right: 0;
+    bottom: 0;
+    background: #00B1D4;
+  }
+</style>
